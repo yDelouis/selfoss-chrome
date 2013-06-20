@@ -1,0 +1,23 @@
+{
+  "background": {
+    "persistent": false,
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_icon": "selfoss_disabled.png"
+  },
+  "default_locale": "en",
+  "description": "__MSG_selfoss-chrome_description__",
+  "icons": {
+    "128": "selfoss_128.png"
+  },
+  "name": "__MSG_selfoss-chrome_name__",
+  "permissions": [
+    "alarms",
+    "tabs",
+    "webNavigation",
+    "*://*"
+   ],
+  "version": "1.0",
+  "manifest_version": 2
+}

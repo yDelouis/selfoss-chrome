@@ -1,0 +1,9 @@
+{
+	"selfoss-chrome_name": {
+		"message": "Selfoss checker"
+	},
+
+	"selfoss-chrome_description": {
+		"message": "Displays the number of unread articles for your Selfoss instance"
+	}
+}	
