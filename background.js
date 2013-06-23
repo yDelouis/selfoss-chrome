@@ -1,4 +1,5 @@
 var selfossUrl = "http://selfoss.ydelouis.fr";
+var checkPeriodInMinute = 5;
 
 var iconEnabled = {path: "selfoss_enabled.png"};
 var iconDisabled = {path: "selfoss_disabled.png"};
@@ -6,8 +7,6 @@ var badgeBackgroundColorEnabled = {color: [190, 190, 190, 230]};
 var badgeBackgroundColorDisabled = {color: [208, 0, 24, 255]};
 
 var requestTimeout = 2 * 1000;
-var enabledImage = document.getElementById('enabled');
-var canvas = document.getElementById('canvas');
 
 /************** Common methods ************************************/
 
@@ -28,6 +27,7 @@ function isSelfossUrl(url) {
 /************* Icon update method ********************************/
 
 function updateIcon() {
+	console.log("Updating icon");
 	var icon = iconDisabled;
 	var badgeBkgColor = badgeBackgroundColorDisabled;
 	var badgeText = "?";
@@ -43,18 +43,15 @@ function updateIcon() {
 
 	chrome.browserAction.setIcon(icon);
 	chrome.browserAction.setBadgeBackgroundColor(badgeBkgColor);
-	chrome.browserAction.setBadgeText(badgeText);
+	chrome.browserAction.setBadgeText({text: badgeText});
 }
 
 /************* End icon update method ****************************/
 
 /************* Check unread methods ******************************/
 
-function scheduleRequest() {
-
-}
-
 function getUnreadCount() {
+	console.log("Updating unread count...");
 	var xhr = new XMLHttpRequest();
 	var abortTimerId = window.setTimeout(function() {
 		xhr.abort();
@@ -66,14 +63,15 @@ function getUnreadCount() {
 	}
 
 	function handleSuccess(count) {
+		console.log("Update finished successfully");
 		localStorage.unreadCount = count;
-		localStorage.requestFailureCount = 0;
 		onFinished();
 	}
 
 	var invokedErrorCallback = false;
 	function handleError() {
-		++localStorage.requestFailureCount;
+		console.log("Error updating unread count");
+		delete localStorage.unreadCount;
 		onFinished();
 		invokedErrorCallback = true;
 	}
@@ -84,8 +82,8 @@ function getUnreadCount() {
 				return;
 			}
 
-			if (xhr.responseXML) {
-				var response = JSON.parse(xhr.responseXML);
+			if (xhr.responseText) {
+				var response = JSON.parse(xhr.responseText);
 				handleSuccess(response.unread);
 				return;
 			}
@@ -100,19 +98,55 @@ function getUnreadCount() {
 		xhr.open("GET", getUnreadCountUrl(), true);
 		xhr.send(null);
 	} catch (e) {
-		console.error(chrome.i18n.getMessage("unreadcheck_exception", e));
 		handleError();
 	}
 }
 
-function startRequest(params) {
-	if (params && params.scheduleRequest) {
-		scheduleRequest();
-	}
+/************* End check unread methods  *************************/
+
+/************* Listener methods **********************************/
+
+function scheduleRequest() {                                                
+	console.log("Creating refresh alarm");                                  
+	chrome.alarms.create("refresh", {periodInMinutes: checkPeriodInMinute});
+}                                                                           
+
+function startRequest() {
+	scheduleRequest();
 	getUnreadCount();
 }
 
-/************* End check unread methods  *************************/
+function onWatchdog() {
+	chrome.alarms.get("refresh", function(alarm) {
+		if (!alarm) {
+			console.log("Watchdog create refresh alarm");
+			startRequest();
+		}
+	});
+}
+
+function onNavigate(details) {
+	if (details.url && isSelfossUrl(details.url)) {
+		console.log("Navigating on Selfoss");
+		getUnreadCount();
+	}
+}
+
+function onInit() {
+	console.log("Initializing extension");
+	startRequest();
+	chrome.alarms.create("watchdog", {periodInMinutes: 5});
+}
+
+function onAlarm(alarm) {
+	if (alarm && alarm.name == "watchdog") {
+		onWatchdog();
+	} else {
+		getUnreadCount();
+	}
+}
+
+/************* End listener methods ******************************/
 
 /************* Browser action methods ****************************/
 
@@ -120,11 +154,13 @@ function goToSelfoss() {
 	chrome.tabs.getAllInWindow(undefined, function(tabs) {
 		for (var i = 0, tab; tab = tabs[i]; i++) {
 			if (tab.url && isSelfossUrl(tab.url)) {
+				console.log("Reopening Selfoss tab");
 				chrome.tabs.update(tab.id, {selected: true});
-				startRequest();
+				getUnreadCount();
 				return;
 			}
 		}
+		console.log("Opening Selfoss in a new tab");
 		chrome.tabs.create({ url: getSelfossUrl() });
 	});
 }
@@ -133,4 +169,10 @@ function goToSelfoss() {
 
 /************ Set listener *************************************/
 
+chrome.runtime.onInstalled.addListener(onInit);
+chrome.alarms.onAlarm.addListener(onAlarm);
 chrome.browserAction.onClicked.addListener(goToSelfoss);
+chrome.tabs.onUpdated.addListener(function(_, details) {
+	onNavigate(details);
+});
+chrome.runtime.onStartup.addListener(getUnreadCount());
