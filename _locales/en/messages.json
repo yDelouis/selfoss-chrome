@@ -1,9 +1,13 @@
 {
-	"selfoss-chrome_name": {
+	"selfosschrome_name": {
 		"message": "Selfoss checker"
 	},
 
-	"selfoss-chrome_description": {
+	"selfosschrome_description": {
 		"message": "Displays the number of unread articles for your Selfoss instance"
+	},
+
+	"unreadcheck_exception": {
+		"message": "Error checking the number of unread articles"
 	}
 }	

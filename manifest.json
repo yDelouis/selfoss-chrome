@@ -7,16 +7,17 @@
     "default_icon": "selfoss_disabled.png"
   },
   "default_locale": "en",
-  "description": "__MSG_selfoss-chrome_description__",
+  "description": "__MSG_selfosschrome_description__",
   "icons": {
     "128": "selfoss_128.png"
   },
-  "name": "__MSG_selfoss-chrome_name__",
+  "name": "__MSG_selfosschrome_name__",
   "permissions": [
     "alarms",
     "tabs",
     "webNavigation",
-    "*://*"
+	"http://*/*",
+	"https://*/*"
    ],
   "version": "1.0",
   "manifest_version": 2
