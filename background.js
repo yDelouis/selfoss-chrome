@@ -3,8 +3,8 @@ var checkPeriodInMinute = 5;
 
 var iconEnabled = {path: "selfoss_enabled.png"};
 var iconDisabled = {path: "selfoss_disabled.png"};
-var badgeBackgroundColorEnabled = {color: [190, 190, 190, 230]};
-var badgeBackgroundColorDisabled = {color: [208, 0, 24, 255]};
+var badgeBackgroundColorEnabled = {color: [208, 0, 24, 255]};
+var badgeBackgroundColorDisabled = {color: [190, 190, 190, 230]};
 
 var requestTimeout = 2 * 1000;
 
