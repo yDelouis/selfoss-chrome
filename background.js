@@ -1,4 +1,3 @@
-var selfossUrl = "http://selfoss.ydelouis.fr";
 var checkPeriodInMinute = 5;
 
 var iconEnabled = {path: "selfoss_enabled.png"};
@@ -11,7 +10,7 @@ var requestTimeout = 2 * 1000;
 /************** Common methods ************************************/
 
 function getSelfossUrl() {
-	return selfossUrl;
+	return "http://"+localStorage.selfossUrl;
 }
 
 function getUnreadCountUrl() {
