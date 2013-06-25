@@ -150,6 +150,10 @@ function onAlarm(alarm) {
 /************* Browser action methods ****************************/
 
 function goToSelfoss() {
+	if (!localStorage.hasOwnProperty("selfossUrl") || localStorage.selfossUrl == "") {
+		chrome.tabs.create({url: "options.html"});
+		return;
+	}
 	chrome.tabs.getAllInWindow(undefined, function(tabs) {
 		for (var i = 0, tab; tab = tabs[i]; i++) {
 			if (tab.url && isSelfossUrl(tab.url)) {
