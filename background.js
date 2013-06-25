@@ -81,7 +81,7 @@ function getUnreadCount() {
 				return;
 			}
 
-			if (xhr.responseText) {
+			if (xhr.status === 200 && xhr.responseText) {
 				var response = JSON.parse(xhr.responseText);
 				handleSuccess(response.unread);
 				return;
