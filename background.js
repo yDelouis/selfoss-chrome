@@ -40,8 +40,8 @@ function addAuthParams(url) {
 		} else {
 			url += "&";
 		}
-		url += "username="+btoa(localStorage.username);
-		url += "&password="+btoa(localStorage.password);
+		url += "username="+encodeURIComponent(localStorage.username);
+		url += "&password="+encodeURIComponent(localStorage.password);
 	}
 	return url;
 }
