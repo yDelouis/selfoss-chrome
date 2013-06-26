@@ -10,15 +10,40 @@ var requestTimeout = 2 * 1000;
 /************** Common methods ************************************/
 
 function getSelfossUrl() {
-	return "http://"+localStorage.selfossUrl;
+	var scheme = "http";
+	if (needAuth) {
+		scheme += "s";
+	}
+	return scheme+"://"+localStorage.selfossUrl;
 }
 
 function getUnreadCountUrl() {
-	return getSelfossUrl() + "/stats";
+	var url = getSelfossUrl() + "/stats";
+	return addAuthParams(url);
 }
 
 function isSelfossUrl(url) {
 	return url.indexOf(getSelfossUrl()) === 0;
+}
+
+function needAuth() {
+	return localStorage.hasOwnProperty("username")
+			&& localStorage.hasOwnProperty("password")
+			&& localStorage.username != ""
+			&& localStorage.password != "";
+}
+
+function addAuthParams(url) {
+	if (needAuth()) {
+		if (url.indexOf("?") === -1) {
+			url += "?";
+		} else {
+			url += "&";
+		}
+		url += "username="+btoa(localStorage.username);
+		url += "&password="+btoa(localStorage.password);
+	}
+	return url;
 }
 
 /************* End commons methods *******************************/
