@@ -9,21 +9,21 @@ var requestTimeout = 2 * 1000;
 
 /************** Common methods ************************************/
 
-function getSelfossUrl() {
+function getSelfossUrl(usesHttps) {
 	var scheme = "http";
-	if (needAuth) {
+	if (usesHttps && needAuth) {
 		scheme += "s";
 	}
 	return scheme+"://"+localStorage.selfossUrl;
 }
 
 function getUnreadCountUrl() {
-	var url = getSelfossUrl() + "/stats";
+	var url = getSelfossUrl(true) + "/stats";
 	return addAuthParams(url);
 }
 
 function isSelfossUrl(url) {
-	return url.indexOf(getSelfossUrl()) === 0;
+	return url.indexOf(localStorage.selfossUrl) !== -1;
 }
 
 function needAuth() {
@@ -189,7 +189,7 @@ function goToSelfoss() {
 			}
 		}
 		console.log("Opening Selfoss in a new tab");
-		chrome.tabs.create({ url: getSelfossUrl() });
+		chrome.tabs.create({ url: getSelfossUrl(false) });
 	});
 }
 
