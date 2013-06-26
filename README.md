@@ -9,18 +9,19 @@ Chrome (or Chromium) extension to check if there are unread articles on your ins
 
 Keeping the source make it easier to update, but you have to keep a folder on your PC.
 
-- Clone the project on your PC : `git clone git@github.com:yDelouis/selfoss-chrome.git`
+- Clone the project on your PC : `git clone git@github.com:yDelouis/selfoss-chrome.git`.
 - In the address bar of Chrome, type `chrome://extensions`.
-- Click on "Load unpacked extension…"
+- Check "Developer mode".
+- Click on "Load unpacked extension…".
 - Navigate to the directory in which your clone the sources, and select it.
 
 Selfoss-chrome is now installed and you are ready to configure it clicking on the selfoss icon at the top right.
 
 To update the extension :
 - Navigate to the source directory.
-- Pull the changes : `git pull origin master`
+- Pull the changes : `git pull origin master`.
 - In the address bar of Chrome, type `chrome://extensions`.
-- Type "CTRL+R"
+- Type "CTRL+R".
 
 
 #### With the crx file
