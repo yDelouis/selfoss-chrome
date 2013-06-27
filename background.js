@@ -93,8 +93,12 @@ function getUnreadCount() {
 	}
 
 	var invokedErrorCallback = false;
-	function handleError() {
-		console.log("Error updating unread count");
+	function handleError(error) {
+		var errorMsg = "Error updating unread count";
+		if (error) {
+			errorMsg += " : "+error;
+		}
+		console.log(errorMsg);
 		delete localStorage.unreadCount;
 		onFinished();
 		invokedErrorCallback = true;
@@ -122,7 +126,7 @@ function getUnreadCount() {
 		xhr.open("GET", getUnreadCountUrl(), true);
 		xhr.send(null);
 	} catch (e) {
-		handleError();
+		handleError(e);
 	}
 }
 
@@ -135,23 +139,19 @@ function scheduleRequest() {
 	chrome.alarms.create("refresh", {periodInMinutes: checkPeriodInMinute});
 }                                                                           
 
-function startRequest() {
-	scheduleRequest();
-	getUnreadCount();
-}
-
 function onWatchdog() {
 	chrome.alarms.get("refresh", function(alarm) {
 		if (!alarm) {
 			console.log("Watchdog create refresh alarm");
-			startRequest();
+			scheduleRequest();
+			getUnreadCount();
 		}
 	});
 }
 
 function onInit() {
 	console.log("Initializing extension");
-	startRequest();
+	scheduleRequest();
 	chrome.alarms.create("watchdog", {periodInMinutes: 5});
 }
 
