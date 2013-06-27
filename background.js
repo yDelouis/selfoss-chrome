@@ -149,13 +149,6 @@ function onWatchdog() {
 	});
 }
 
-function onNavigate(details) {
-	if (details.url && isSelfossUrl(details.url)) {
-		console.log("Navigating on Selfoss");
-		getUnreadCount();
-	}
-}
-
 function onInit() {
 	console.log("Initializing extension");
 	startRequest();
@@ -167,6 +160,22 @@ function onAlarm(alarm) {
 		onWatchdog();
 	} else {
 		getUnreadCount();
+	}
+}
+
+function onTabUpdated(tabId, details) {
+	if (details.url && isSelfossUrl(details.url)) {
+	    console.log("Selfoss tab updated");
+		localStorage.tabId = tabId;
+	    getUnreadCount();
+	}
+}
+
+function onTabRemoved(tabId, details) {
+	if (tabId == localStorage.tabId) {
+		console.log("Selfoss tab removed");
+		getUnreadCount();
+		delete localStorage.tabId;
 	}
 }
 
@@ -184,7 +193,6 @@ function goToSelfoss() {
 			if (tab.url && isSelfossUrl(tab.url)) {
 				console.log("Reopening Selfoss tab");
 				chrome.tabs.update(tab.id, {selected: true});
-				getUnreadCount();
 				return;
 			}
 		}
@@ -200,7 +208,6 @@ function goToSelfoss() {
 chrome.runtime.onInstalled.addListener(onInit);
 chrome.alarms.onAlarm.addListener(onAlarm);
 chrome.browserAction.onClicked.addListener(goToSelfoss);
-chrome.tabs.onUpdated.addListener(function(_, details) {
-	onNavigate(details);
-});
+chrome.tabs.onUpdated.addListener(onTabUpdated);
+chrome.tabs.onRemoved.addListener(onTabRemoved);
 chrome.runtime.onStartup.addListener(getUnreadCount());
