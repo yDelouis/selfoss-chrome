@@ -11,9 +11,6 @@ var requestTimeout = 2 * 1000;
 
 function getSelfossUrl(usesHttps) {
 	var scheme = "http";
-	if (usesHttps && needAuth) {
-		scheme += "s";
-	}
 	return scheme+"://"+localStorage.selfossUrl;
 }
 
@@ -102,6 +99,11 @@ function getUnreadCount() {
 		delete localStorage.unreadCount;
 		onFinished();
 		invokedErrorCallback = true;
+	}
+	
+	if (!localStorage.selfsossUrl()) {
+		handleError("Selfoss url undefined");
+		return;
 	}
 
 	try {
