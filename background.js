@@ -101,11 +101,6 @@ function getUnreadCount() {
 		invokedErrorCallback = true;
 	}
 	
-	if (!localStorage.selfsossUrl()) {
-		handleError("Selfoss url undefined");
-		return;
-	}
-
 	try {
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState !== 4) {
