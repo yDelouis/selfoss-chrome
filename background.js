@@ -9,13 +9,12 @@ var requestTimeout = 2 * 1000;
 
 /************** Common methods ************************************/
 
-function getSelfossUrl(usesHttps) {
-	var scheme = "http";
-	return scheme+"://"+localStorage.selfossUrl;
+function getSelfossUrl() {
+	return localStorage.selfossUrl;
 }
 
 function getUnreadCountUrl() {
-	var url = getSelfossUrl(true) + "/stats";
+	var url = getSelfossUrl() + "/stats";
 	return addAuthParams(url);
 }
 
@@ -100,7 +99,7 @@ function getUnreadCount() {
 		onFinished();
 		invokedErrorCallback = true;
 	}
-	
+
 	try {
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState !== 4) {
@@ -131,10 +130,10 @@ function getUnreadCount() {
 
 /************* Listener methods **********************************/
 
-function scheduleRequest() {                                                
-	console.log("Creating refresh alarm");                                  
+function scheduleRequest() {
+	console.log("Creating refresh alarm");
 	chrome.alarms.create("refresh", {periodInMinutes: checkPeriodInMinute});
-}                                                                           
+}
 
 function onWatchdog() {
 	chrome.alarms.get("refresh", function(alarm) {
@@ -194,7 +193,7 @@ function goToSelfoss() {
 			}
 		}
 		console.log("Opening Selfoss in a new tab");
-		chrome.tabs.create({ url: getSelfossUrl(false) });
+		chrome.tabs.create({ url: getSelfossUrl() });
 	});
 }
 
